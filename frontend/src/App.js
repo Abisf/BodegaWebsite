@@ -344,6 +344,12 @@ function AppContent() {
         >
           LOCATION
         </button>
+        <button 
+          className={currentSection === 'test' ? 'active' : ''}
+          onClick={() => setCurrentSection('test')}
+        >
+          TEST
+        </button>
       </nav>
 
       {/* Menu Section */}
