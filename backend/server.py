@@ -188,7 +188,7 @@ def process_payment(payment_data: PaymentData):
             "success": True,
             "payment_id": payment_id,
             "order_id": f"order_{int(time.time())}",  # Would be real order ID
-            "amount": order_data.total,
+            "amount": order_data.get('total', 0),
             "status": "completed",
             "message": "Payment processed successfully"
         }
