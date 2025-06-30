@@ -2,6 +2,10 @@ import React, { Suspense, useState, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Text, Box, Sphere, Cylinder } from '@react-three/drei'
 import { motion, AnimatePresence } from 'framer-motion'
+import { CartProvider, useCart } from './contexts/CartContext'
+import Cart from './components/Cart'
+import Checkout from './components/Checkout'
+import { formatPrice } from './services/orderService'
 import './App.css'
 
 // 3D Food Models
@@ -106,9 +110,16 @@ const PlatterModel = ({ position, rotation, scale = [1, 1, 1] }) => {
   )
 }
 
-// Menu Component
-const MenuItem = ({ name, description, price, ModelComponent, modelProps }) => {
+// Menu Component with Add to Cart
+const MenuItem = ({ item, ModelComponent, modelProps }) => {
   const [isHovered, setIsHovered] = useState(false)
+  const { addToCart } = useCart()
+
+  const handleAddToCart = () => {
+    addToCart(item)
+    // Add visual feedback
+    setIsHovered(false)
+  }
 
   return (
     <motion.div 
@@ -130,51 +141,128 @@ const MenuItem = ({ name, description, price, ModelComponent, modelProps }) => {
         </Canvas>
       </div>
       <div className="menu-content">
-        <h3 className="menu-title">{name}</h3>
-        <p className="menu-description">{description}</p>
-        <span className="menu-price">${price}</span>
+        <h3 className="menu-title">{item.name}</h3>
+        <p className="menu-description">{item.description}</p>
+        <div className="menu-footer">
+          <span className="menu-price">{formatPrice(item.price)}</span>
+          <motion.button
+            className="add-to-cart-btn"
+            onClick={handleAddToCart}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            Add to Cart
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   )
 }
 
-// Main App Component
-function App() {
+// Cart Button Component
+const CartButton = ({ onClick }) => {
+  const { getCartItemCount } = useCart()
+  const itemCount = getCartItemCount()
+
+  return (
+    <motion.button
+      className="cart-button"
+      onClick={onClick}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      🛒
+      {itemCount > 0 && (
+        <span className="cart-badge">{itemCount}</span>
+      )}
+    </motion.button>
+  )
+}
+
+// Success notification component
+const OrderSuccess = ({ order, onClose }) => {
+  return (
+    <motion.div
+      className="order-success-notification"
+      initial={{ opacity: 0, y: -100 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -100 }}
+    >
+      <div className="success-content">
+        <span className="success-icon">🎉</span>
+        <div>
+          <h4>Order Confirmed!</h4>
+          <p>Order #{order.orderId} • {formatPrice(order.total)}</p>
+        </div>
+        <button onClick={onClose}>×</button>
+      </div>
+    </motion.div>
+  )
+}
+
+// Main App Content Component
+function AppContent() {
   const [currentSection, setCurrentSection] = useState('home')
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [orderSuccess, setOrderSuccess] = useState(null)
 
   const menuItems = [
     {
+      id: 'bec',
       name: "Bacon Egg & Cheese",
       description: "Classic NYC bodega sandwich with crispy bacon, fluffy eggs, and melted cheese",
-      price: "6.50",
+      price: 6.50,
       ModelComponent: SandwichModel,
       modelProps: { position: [0, 0, 0], rotation: [0, 0, 0] }
     },
     {
+      id: 'chopped-cheese',
       name: "Chopped Cheese",
       description: "Legendary NYC chopped cheese with ground beef, onions, peppers, and cheese",
-      price: "8.00",
+      price: 8.00,
       ModelComponent: SandwichModel,
       modelProps: { position: [0, 0, 0], rotation: [0, 0, 0] }
     },
     {
+      id: 'wings',
       name: "Buffalo Wings",
       description: "Crispy wings tossed in our signature buffalo sauce",
-      price: "12.99",
+      price: 12.99,
       ModelComponent: WingsModel,
       modelProps: { position: [0, 0, 0], rotation: [0, 0, 0] }
     },
     {
+      id: 'halal-platter',
       name: "Halal Platter",
       description: "Tender chicken or lamb over rice with white sauce and hot sauce",
-      price: "10.99",
+      price: 10.99,
       ModelComponent: PlatterModel,
       modelProps: { position: [0, 0, 0], rotation: [0, 0, 0] }
     }
   ]
 
+  const handleOrderSuccess = (order) => {
+    setOrderSuccess(order)
+    setIsCheckoutOpen(false)
+    setTimeout(() => setOrderSuccess(null), 5000)
+  }
+
   return (
     <div className="App">
+      {/* Order Success Notification */}
+      <AnimatePresence>
+        {orderSuccess && (
+          <OrderSuccess 
+            order={orderSuccess} 
+            onClose={() => setOrderSuccess(null)} 
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Cart Button */}
+      <CartButton onClick={() => setIsCartOpen(true)} />
+
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
@@ -210,6 +298,7 @@ function App() {
             transition={{ delay: 1, duration: 0.8 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => setCurrentSection('menu')}
           >
             ORDER NOW
           </motion.button>
@@ -269,7 +358,12 @@ function App() {
             <h2 className="section-title">Our Signature Items</h2>
             <div className="menu-grid">
               {menuItems.map((item, index) => (
-                <MenuItem key={index} {...item} />
+                <MenuItem 
+                  key={item.id} 
+                  item={item}
+                  ModelComponent={item.ModelComponent}
+                  modelProps={item.modelProps}
+                />
               ))}
             </div>
           </motion.section>
@@ -330,13 +424,23 @@ function App() {
                 
                 <div className="delivery-info">
                   <h3>🚚 Delivery Available</h3>
-                  <p>Order through DoorDash, Uber Eats, or call us directly</p>
+                  <p>Order through our website or call us directly</p>
                 </div>
               </div>
             </div>
           </motion.section>
         )}
       </AnimatePresence>
+
+      {/* Cart Component */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+
+      {/* Checkout Component */}
+      <Checkout 
+        isOpen={isCheckoutOpen} 
+        onClose={() => setIsCheckoutOpen(false)}
+        onSuccess={handleOrderSuccess}
+      />
 
       {/* Footer */}
       <footer className="footer">
@@ -349,6 +453,15 @@ function App() {
         </div>
       </footer>
     </div>
+  )
+}
+
+// Main App with Cart Provider
+function App() {
+  return (
+    <CartProvider>
+      <AppContent />
+    </CartProvider>
   )
 }
 
