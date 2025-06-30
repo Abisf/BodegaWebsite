@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../contexts/CartContext'
 import { formatPrice } from '../services/orderService'
 
-const Cart = ({ isOpen, onClose }) => {
+const Cart = ({ isOpen, onClose, onCheckout }) => {
   const { 
     items, 
     removeFromCart, 
