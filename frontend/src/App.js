@@ -437,8 +437,13 @@ function AppContent() {
         isOpen={isCartOpen} 
         onClose={() => setIsCartOpen(false)}
         onCheckout={() => {
-          setIsCartOpen(false)
-          setIsCheckoutOpen(true)
+          console.log("Checkout triggered from Cart component");
+          setIsCartOpen(false);
+          // Add a small delay before opening checkout
+          setTimeout(() => {
+            setIsCheckoutOpen(true);
+            console.log("Checkout modal should be open now");
+          }, 100);
         }}
       />
 
