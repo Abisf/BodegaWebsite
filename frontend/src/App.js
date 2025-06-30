@@ -433,7 +433,14 @@ function AppContent() {
       </AnimatePresence>
 
       {/* Cart Component */}
-      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <Cart 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)}
+        onCheckout={() => {
+          setIsCartOpen(false)
+          setIsCheckoutOpen(true)
+        }}
+      />
 
       {/* Checkout Component */}
       <Checkout 
