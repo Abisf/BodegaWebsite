@@ -33,6 +33,12 @@ const Checkout = ({ isOpen, onClose, onSuccess }) => {
     dummyCard: '4242-4242-4242-4242' // 🔄 REMOVE FOR PRODUCTION
   })
 
+  useEffect(() => {
+    if (isOpen) {
+      console.log("Checkout component is open");
+    }
+  }, [isOpen]);
+
   const handleCustomerSubmit = (e) => {
     e.preventDefault()
     if (!customerData.name || !customerData.email || !customerData.phone) {
