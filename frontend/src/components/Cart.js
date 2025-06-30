@@ -23,9 +23,16 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
     }
   }
 
-  const handleCheckout = () => {
+  const handleCheckout = (e) => {
+    e.preventDefault()
+    console.log('Checkout button clicked, calling onCheckout')
     if (onCheckout) {
-      onCheckout()
+      // Close the cart panel first
+      onClose()
+      // Small delay before opening checkout to ensure cart is closed
+      setTimeout(() => {
+        onCheckout()
+      }, 100)
     }
   }
 
