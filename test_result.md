@@ -182,15 +182,18 @@ frontend:
 
   - task: "Order Success notification"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/App.js"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "Could not test Order Success notification because payment processing fails."
+      - working: true
+        agent: "testing"
+        comment: "Order Success notification now appears correctly after successful checkout. It displays the order ID and total amount, and auto-closes after a few seconds as expected."
 
 metadata:
   created_by: "testing_agent"
