@@ -175,8 +175,8 @@ def process_payment(payment_data: PaymentData):
         # Store payment record
         payments_db[payment_id] = {
             "id": payment_id,
-            "order_total": order_data.total,
-            "customer": order_data.customer.dict(),
+            "order_total": order_data.get('total', 0),
+            "customer": order_data.get('customer', {}),
             "status": "completed",
             "processed_at": time.time(),
             "method": payment_data.payment.get("method", "card")
