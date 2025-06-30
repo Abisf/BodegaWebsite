@@ -205,8 +205,7 @@ test_plan:
   current_focus:
     - "Checkout Process"
     - "Order Success notification"
-  stuck_tasks:
-    - "Checkout Process"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
