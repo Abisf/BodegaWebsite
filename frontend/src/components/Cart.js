@@ -132,6 +132,7 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
                         whileTap={{ scale: 0.95 }}
                         disabled={isCheckingOut}
                         type="button"
+                        style={{ position: 'relative', zIndex: 1000 }}
                       >
                         {isCheckingOut ? 'Processing...' : 'Checkout'}
                       </motion.button>
