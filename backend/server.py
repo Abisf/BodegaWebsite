@@ -151,7 +151,7 @@ def process_payment(payment_data: PaymentData):
     - Handle Toast webhook notifications
     """
     try:
-        # Get order from our dummy database
+        # Get order from request data
         order_data = payment_data.order
         
         # Generate payment ID
