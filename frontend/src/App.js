@@ -437,6 +437,18 @@ function AppContent() {
             </div>
           </motion.section>
         )}
+
+        {currentSection === 'test' && (
+          <motion.section 
+            className="test-section"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.5 }}
+          >
+            <TestCheckout />
+          </motion.section>
+        )}
       </AnimatePresence>
 
       {/* Cart Component */}
