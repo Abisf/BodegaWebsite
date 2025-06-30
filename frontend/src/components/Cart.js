@@ -24,8 +24,11 @@ const Cart = ({ isOpen, onClose }) => {
   }
 
   const handleCheckout = () => {
-    setIsCheckingOut(true)
-    // This will trigger the checkout flow
+    onClose() // Close cart
+    // The parent component will handle opening checkout
+    if (window.openCheckout) {
+      window.openCheckout()
+    }
   }
 
   return (
