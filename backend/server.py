@@ -46,8 +46,8 @@ class OrderData(BaseModel):
     timestamp: str
 
 class PaymentData(BaseModel):
-    order: OrderData
-    payment: dict  # Will contain real payment details from Stripe/Square/etc
+    order: dict  # Changed from OrderData to dict to handle any structure
+    payment: dict
 
 class OrderConfirmation(BaseModel):
     order_id: str
