@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { CartProvider, useCart } from './contexts/CartContext'
 import Cart from './components/Cart'
 import Checkout from './components/Checkout'
+import TestCheckout from './TestCheckout'
 import { formatPrice } from './services/orderService'
 import './App.css'
 
