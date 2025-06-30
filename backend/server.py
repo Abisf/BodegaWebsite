@@ -182,7 +182,7 @@ def process_payment(payment_data: PaymentData):
             "method": payment_data.payment.get("method", "card")
         }
         
-        print(f"💳 Processed payment {payment_id}: ${order_data.total}")
+        print(f"💳 Processed payment {payment_id}: ${order_data.get('total', 0)}")
         
         return {
             "success": True,
