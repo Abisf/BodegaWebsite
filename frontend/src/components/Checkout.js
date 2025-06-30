@@ -92,12 +92,15 @@ const Checkout = ({ isOpen, onClose, onSuccess }) => {
 
   if (!isOpen) return null
 
+  console.log("Rendering checkout component, isOpen:", isOpen);
+
   return (
     <motion.div
       className="checkout-overlay"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      style={{ zIndex: 1100 }}
     >
       <motion.div
         className="checkout-modal"
